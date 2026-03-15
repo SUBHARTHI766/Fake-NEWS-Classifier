@@ -158,6 +158,7 @@ Respond ONLY with a valid JSON object in this exact structure (no markdown, no e
     }
 
     const data = await response.json();
+    console.log("Gemini raw response:", JSON.stringify(data, null, 2));
 
     if (data.error) {
       throw new Error(data.error.message || "API error");
