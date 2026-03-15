@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TruthLens — AI Fake News Detector</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">🔍</div>
+    <span class="brand">Truth<span>Lens</span></span>
+    <span class="tag">AI + WEB SEARCH</span>
+  </header>
+
+  <!-- Hero -->
+  <main>
+    <div class="hero">
+      <h1>Is the news <span class="glow-blue">real</span> or <span class="glow-pink">fake</span>?</h1>
+      <p>Paste any news headline or article. Our AI cross-checks it against live web sources and delivers a verdict with full reasoning.</p>
+    </div>
+
+    <!-- Input -->
+    <div class="input-zone" id="inputZone">
+      <label>Paste your news headline or article</label>
+      <textarea id="newsInput" rows="5" placeholder="e.g. 'Scientists discover that drinking coffee extends lifespan by 20 years according to a new Harvard study...'"></textarea>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-primary" id="analyzeBtn" onclick="analyze()">
+        🧠&nbsp; Analyze News
+      </button>
+      <button class="btn-secondary" onclick="loadExample()">Load Example</button>
+      <button class="btn-secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <!-- Result Area -->
+    <div id="resultArea"></div>
+  </main>
+
+  <footer>
+    TruthLens — AI Fake News Detector &nbsp;·&nbsp; 4th Semester AI Project &nbsp;·&nbsp; Powered by Claude AI + Web Search
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
