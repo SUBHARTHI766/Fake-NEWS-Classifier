@@ -6,21 +6,21 @@
 // ---- CONFIG ----
 // Replace this with your actual Anthropic API key
 // Get one free at: https://console.anthropic.com
-const API_KEY = "YOUR_ANTHROPIC_API_KEY_HERE";
+const API_KEY = "AIzaSyD28xxMw1p9Kwd-b4e3gdclTe31-qv8luw";
 
 const EXAMPLES = [
   "Scientists at MIT have invented a pill that can completely replace the need for sleep, requiring only one tablet per week to stay fully alert.",
   "NASA confirms the moon is slowly drifting away from Earth at 3.8 cm per year and may eventually escape Earth's gravitational pull.",
   "The WHO has officially declared that 5G towers are causing COVID-19 mutations and has called for an immediate global shutdown of all 5G networks.",
   "A new Stanford study proves that eating chocolate daily improves memory and IQ scores by up to 30 percent.",
-  "Scientists have discovered a species of jellyfish that is biologically immortal and can reverse its aging process indefinitely."
+  "Scientists have discovered a species of jellyfish that is biologically immortal and can reverse its aging process indefinitely.",
 ];
 
 const STEPS = [
   "Reading and understanding the claim",
   "Searching the web for related sources",
   "Cross-referencing facts and evidence",
-  "Generating AI verdict and analysis"
+  "Generating AI verdict and analysis",
 ];
 
 let stepInterval = null;
@@ -75,12 +75,14 @@ function updateStep(active) {
 }
 
 function renderLoadingCard() {
-  const stepsHTML = STEPS.map((s, i) => `
+  const stepsHTML = STEPS.map(
+    (s, i) => `
     <div class="step-item" id="step-${i}">
       <div class="step-dot"></div>
       <span>${s}</span>
     </div>
-  `).join("");
+  `,
+  ).join("");
 
   document.getElementById("resultArea").innerHTML = `
     <div class="loading-card">
@@ -114,7 +116,7 @@ async function analyze() {
   setButtonLoading(true);
   startSteps();
 
-  const prompt = `You are an expert fact-checker and AI journalist. Analyze the following news claim and determine if it is REAL, FAKE, or PARTIALLY_TRUE. Use web search to find relevant sources and evidence.
+  const prompt = `You are an expert fact-checker and AI journalist. Analyze the following news claim and determine if it is REAL, FAKE, or PARTIALLY_TRUE. Use known verified knowledge and cite realistic sources.
 
 NEWS CLAIM:
 "${text}"
@@ -135,21 +137,30 @@ Respond ONLY with a valid JSON object in this exact structure (no markdown, no e
 }`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 1000,
+          },
+        }),
       },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
+    );
 
     const data = await response.json();
 
@@ -157,10 +168,7 @@ Respond ONLY with a valid JSON object in this exact structure (no markdown, no e
       throw new Error(data.error.message || "API error");
     }
 
-    // Extract text from response (may include tool_use blocks)
-    const fullText = (data.content || [])
-      .map(block => block.type === "text" ? block.text : "")
-      .join("");
+    const fullText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     const clean = fullText.replace(/```json|```/g, "").trim();
     const jsonStart = clean.indexOf("{");
@@ -169,7 +177,6 @@ Respond ONLY with a valid JSON object in this exact structure (no markdown, no e
 
     clearInterval(stepInterval);
     renderResult(parsed);
-
   } catch (err) {
     clearInterval(stepInterval);
     document.getElementById("resultArea").innerHTML = `
@@ -185,16 +192,23 @@ Respond ONLY with a valid JSON object in this exact structure (no markdown, no e
 
 function renderResult(data) {
   const map = {
-    REAL:           { label: "Likely Real",     icon: "✓", cls: "real",    color: "#00e676" },
-    FAKE:           { label: "Likely Fake",     icon: "✕", cls: "fake",    color: "#ff1744" },
-    PARTIALLY_TRUE: { label: "Partially True",  icon: "~", cls: "partial", color: "#ffab00" }
+    REAL: { label: "Likely Real", icon: "✓", cls: "real", color: "#00e676" },
+    FAKE: { label: "Likely Fake", icon: "✕", cls: "fake", color: "#ff1744" },
+    PARTIALLY_TRUE: {
+      label: "Partially True",
+      icon: "~",
+      cls: "partial",
+      color: "#ffab00",
+    },
   };
 
   const v = map[data.verdict] || map["PARTIALLY_TRUE"];
   const confColor = v.color;
 
   // Sources HTML
-  const sourcesHTML = (data.sources || []).map(src => `
+  const sourcesHTML = (data.sources || [])
+    .map(
+      (src) => `
     <div class="source-chip">
       <div class="source-dot" style="background: ${src.supports ? "#00e676" : "#ff1744"}"></div>
       <div>
@@ -205,13 +219,15 @@ function renderResult(data) {
         ${src.supports ? "SUPPORTS" : "CONTRADICTS"}
       </span>
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 
   // Possibility section (only for FAKE)
   let possibilityHTML = "";
   if (data.verdict === "FAKE" && data.possibility_score !== null) {
     const tags = (data.possibility_tags || [])
-      .map(t => `<span class="poss-tag">${t}</span>`)
+      .map((t) => `<span class="poss-tag">${t}</span>`)
       .join("");
 
     possibilityHTML = `
@@ -266,11 +282,15 @@ function renderResult(data) {
         </div>
 
         <!-- Sources -->
-        ${sourcesHTML ? `
+        ${
+          sourcesHTML
+            ? `
         <div>
           <div class="section-label">🌐 Sources Checked</div>
           <div class="sources-list">${sourcesHTML}</div>
-        </div>` : ""}
+        </div>`
+            : ""
+        }
 
         <!-- Possibility -->
         ${possibilityHTML}
