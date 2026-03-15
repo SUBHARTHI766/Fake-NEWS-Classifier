@@ -6,7 +6,7 @@
 // ---- CONFIG ----
 // Replace this with your actual Anthropic API key
 // Get one free at: https://console.anthropic.com
-const API_KEY = "AIzaSyCRSbSJwJTcFhoDtYlTQu2BX_pfWCYJa0E";
+const API_KEY = "AIzaSyByGOy1i-xdy3qU6yQ6qBZZhi_jLlm_a2w";
 
 const EXAMPLES = [
   "Scientists at MIT have invented a pill that can completely replace the need for sleep, requiring only one tablet per week to stay fully alert.",
