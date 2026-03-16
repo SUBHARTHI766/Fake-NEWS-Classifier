@@ -33,13 +33,13 @@ truthlens/
 ```
 User pastes news
        ↓
-JavaScript sends request to Claude AI (Anthropic API)
+JavaScript sends request to Gemini AI
        ↓
-Claude uses web_search tool to find related articles
+Gemini uses web_search tool to find related articles
        ↓
-Claude cross-references facts from multiple sources
+Gemini cross-references facts from multiple sources
        ↓
-Claude returns JSON verdict: REAL / FAKE / PARTIALLY_TRUE
+Gemini returns JSON verdict: REAL / FAKE / PARTIALLY_TRUE
        ↓
 Website renders verdict, confidence score, sources, and future possibility
 ```
